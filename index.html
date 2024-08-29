@@ -88,6 +88,18 @@
             border-color: #dee2e6 #dee2e6 #fff;
             font-weight: bold;
         }
+        .spinner-border {
+            color: #ff6600;
+            width: 3rem;
+            height: 3rem;
+        }
+
+        #spinner-container {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -104,6 +116,12 @@
                 <button class="nav-link" id="older-tab" data-bs-toggle="tab" data-bs-target="#older" type="button" role="tab" aria-controls="older" aria-selected="false">Older</button>
             </li>
         </ul>
+        <div id="spinner-container">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading stories...</p>
+        </div>
         <div class="tab-content" id="storyTabContent">
             <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="today-tab">
                 <div id="today-stories" class="row"></div>
@@ -128,6 +146,16 @@
             let lastLoadedIndex = 0;
             const storiesPerLoad = 30;
             const imageCategories = ['technology', 'business', 'science', 'nature', 'abstract'];
+
+            function showSpinner() {
+                $('#spinner-container').show();
+                $('#load-more').prop('disabled', true);
+            }
+
+            function hideSpinner() {
+                $('#spinner-container').hide();
+                $('#load-more').prop('disabled', false);
+            }
 
             function getUniqueImage(storyId) {
                 const category = imageCategories[storyId % imageCategories.length];
@@ -172,6 +200,7 @@
             }
 
             function fetchStories() {
+                showSpinner();
                 $.get("https://hacker-news.firebaseio.com/v0/topstories.json", function(storyIds) {
                     const storiesToLoad = storyIds.slice(lastLoadedIndex, lastLoadedIndex + storiesPerLoad);
                     lastLoadedIndex += storiesPerLoad;
@@ -190,9 +219,11 @@
                         if (lastLoadedIndex >= storyIds.length) {
                             $('#load-more').hide();
                         }
+                        hideSpinner();
                     });
                 }).fail(function() {
                     $('#stories-container').html("<p class='text-center'>Failed to fetch stories. Please try again.</p>");
+                    hideSpinner();
                 });
             }
 
