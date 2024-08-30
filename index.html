@@ -201,36 +201,43 @@
 
             function fetchStories() {
                 showSpinner();
-                $.get("https://hacker-news.firebaseio.com/v0/topstories.json", function(storyIds) {
-                    const storiesToLoad = storyIds.slice(lastLoadedIndex, lastLoadedIndex + storiesPerLoad);
-                    lastLoadedIndex += storiesPerLoad;
+                $.ajax({
+                    url: "http://localhost:3000/api/top-stories",
+                    method: "GET",
+                    success: function(storyIds) {
+                        const storiesToFetch = storyIds.slice(lastLoadedIndex, lastLoadedIndex + storiesPerLoad);
+                        const storyPromises = storiesToFetch.map(id => 
+                            $.get(`http://localhost:3000/api/item/${id}`)
+                        );
 
-                    const storyPromises = storiesToLoad.map(storyId => 
-                        $.get(`https://hacker-news.firebaseio.com/v0/item/${storyId}.json`)
-                    );
+                        Promise.all(storyPromises)
+                            .then(stories => {
+                                stories.forEach(story => {
+                                    const category = getDateCategory(story.time);
+                                    const storyHtml = renderStory(story);
+                                    $(`#${category.toLowerCase()}-stories`).append(storyHtml);
+                                });
 
-                    Promise.all(storyPromises).then(stories => {
-                        stories.forEach(story => {
-                            const category = getDateCategory(story.time);
-                            const storyHtml = renderStory(story);
-                            $(`#${category.toLowerCase()}-stories`).append(storyHtml);
-                        });
-
-                        if (lastLoadedIndex >= storyIds.length) {
-                            $('#load-more').hide();
-                        }
+                                lastLoadedIndex += stories.length;
+                                if (stories.length < storiesPerLoad) {
+                                    $('#load-more').hide();
+                                }
+                                hideSpinner();
+                            })
+                            .catch(error => {
+                                $('#stories-container').html("<p class='text-center'>Failed to process stories. Please try again.</p>");
+                                hideSpinner();
+                            });
+                    },
+                    error: function() {
+                        $('#stories-container').html("<p class='text-center'>Failed to fetch stories. Please try again.</p>");
                         hideSpinner();
-                    });
-                }).fail(function() {
-                    $('#stories-container').html("<p class='text-center'>Failed to fetch stories. Please try again.</p>");
-                    hideSpinner();
+                    }
                 });
             }
 
-            // Initial stories fetch
             fetchStories();
 
-            // Load more button
             $('#load-more').click(fetchStories);
         });
     </script>
