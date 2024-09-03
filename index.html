@@ -207,7 +207,7 @@
                     success: function(storyIds) {
                         const storiesToFetch = storyIds.slice(lastLoadedIndex, lastLoadedIndex + storiesPerLoad);
                         const storyPromises = storiesToFetch.map(id => 
-                            $.get(`http://localhost:3000/api/item/${id}`)
+                            $.get(`https://hacker-news-server-6dzb.onrender.com/api/item/${id}`)
                         );
 
                         Promise.all(storyPromises)
