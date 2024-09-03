@@ -3,136 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Updates</title>
+    <title>TechPulse - Latest IT Updates</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f4f6f9;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --light-text-color: #777777;
+        }
+
         body {
-            background-color: #f0f2f5;
-            padding-top: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .story-card {
-            background-color: #ffffff;
+            background-color: var(--card-background);
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             margin-bottom: 20px;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+            height: 100%;
         }
+
         .story-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
-        .story-title {
-            color: #1a1a1a;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .story-title:hover {
-            color: #ff6600;
-        }
-        .story-meta {
-            font-size: 0.9rem;
-            color: #666;
-        }
+
         .story-image {
             width: 100%;
             height: 200px;
             object-fit: cover;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
         }
+
         .story-content {
             padding: 20px;
         }
+
+        .story-title {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .story-title:hover {
+            color: var(--primary-color);
+        }
+
+        .story-meta {
+            font-size: 0.85rem;
+            color: var(--light-text-color);
+            margin-bottom: 15px;
+        }
+
         .story-stats {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-        .story-stat {
-            display: flex;
-            align-items: center;
-        }
-        .story-stat i {
-            margin-right: 5px;
-            color: #ff6600;
-        }
-        #load-more {
-            background-color: #ff6600;
-            border: none;
-            padding: 10px 20px;
-            font-weight: 600;
-        }
-        #load-more:hover {
-            background-color: #e65c00;
-        }
-        .date-header {
-            background-color: #ff6600;
-            color: white;
-            padding: 10px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .nav-tabs .nav-link {
-            color: #495057;
-            background-color: #f8f9fa;
-            border-color: #dee2e6 #dee2e6 #fff;
-        }
-        .nav-tabs .nav-link.active {
-            color: #ff6600;
-            background-color: #fff;
-            border-color: #dee2e6 #dee2e6 #fff;
-            font-weight: bold;
-        }
-        .spinner-border {
-            color: #ff6600;
-            width: 3rem;
-            height: 3rem;
+            font-size: 0.9rem;
+            color: var(--light-text-color);
         }
 
-        #spinner-container {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
+        .story-stat i {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        .filter-btn {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        #loading-trigger {
+            height: 1px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="mb-4 text-center">IT Updates</h1>
-        <ul class="nav nav-tabs mb-4" id="storyTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="today-tab" data-bs-toggle="tab" data-bs-target="#today" type="button" role="tab" aria-controls="today" aria-selected="true">Today</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="yesterday-tab" data-bs-toggle="tab" data-bs-target="#yesterday" type="button" role="tab" aria-controls="yesterday" aria-selected="false">Yesterday</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="older-tab" data-bs-toggle="tab" data-bs-target="#older" type="button" role="tab" aria-controls="older" aria-selected="false">Older</button>
-            </li>
-        </ul>
-        <div id="spinner-container">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-2">Loading stories...</p>
-        </div>
-        <div class="tab-content" id="storyTabContent">
-            <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="today-tab">
-                <div id="today-stories" class="row"></div>
-            </div>
-            <div class="tab-pane fade" id="yesterday" role="tabpanel" aria-labelledby="yesterday-tab">
-                <div id="yesterday-stories" class="row"></div>
-            </div>
-            <div class="tab-pane fade" id="older" role="tabpanel" aria-labelledby="older-tab">
-                <div id="older-stories" class="row"></div>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">TechPulse</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
+
+    <div class="container mt-4">
+        <section id="home">
+            <h1 class="mb-4">Latest IT Updates</h1>
+            <div class="mb-3">
+                <button class="btn btn-primary filter-btn" data-filter="all">All</button>
+                <button class="btn btn-outline-primary filter-btn" data-filter="today">Today</button>
+                <button class="btn btn-outline-primary filter-btn" data-filter="yesterday">Yesterday</button>
+                <button class="btn btn-outline-primary filter-btn" data-filter="older">Older</button>
+            </div>
+            <div id="stories-container">
+                <!-- Stories will be dynamically inserted here -->
+            </div>
+            <div id="loading-trigger"></div>
+        </section>
+
+        <section id="about" class="mt-5 pt-5">
+            <h2 class="mb-4">About TechPulse</h2>
+            <p>TechPulse is your go-to source for the latest updates in the world of Information Technology. We curate and deliver the most relevant and impactful news from various trusted sources, keeping you informed about the rapidly evolving tech landscape.</p>
+            <p>Our mission is to empower tech enthusiasts, professionals, and decision-makers with timely and accurate information, helping them stay ahead in the fast-paced world of technology.</p>
+        </section>
+
+        <section id="contact" class="mt-5 pt-5">
+            <h2 class="mb-4">Contact Us</h2>
+            <p>We'd love to hear from you! Whether you have a question, feedback, or a suggestion, feel free to reach out to us using the form below.</p>
+            <form>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </section>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -142,49 +166,29 @@
         $(document).ready(function() {
             let lastLoadedIndex = 0;
             const storiesPerLoad = 30;
-            const imageCategories = ['technology', 'business', 'science', 'nature', 'abstract'];
-
-            function showSpinner() {
-                $('#spinner-container').show();
-                $('#load-more').prop('disabled', true);
-            }
-
-            function hideSpinner() {
-                $('#spinner-container').hide();
-                $('#load-more').prop('disabled', false);
-            }
+            let allStories = [];
+            let currentFilter = 'all';
+            let isLoading = false;
 
             function getImageUrl() {
                 return `https://picsum.photos/300/200?random=${Math.random()}`;
             }
 
-            function getDateCategory(timestamp) {
-                const now = moment();
-                const storyDate = moment.unix(timestamp);
-                if (storyDate.isSame(now, 'day')) {
-                    return 'Today';
-                } else if (storyDate.isSame(now.clone().subtract(1, 'day'), 'day')) {
-                    return 'Yesterday';
-                } else {
-                    return 'Older';
-                }
-            }
-
             function renderStory(story) {
-                const storyTime = moment.unix(story.time).fromNow();
+                const storyTime = moment.unix(story.time);
+                const timeAgo = storyTime.fromNow();
                 const domain = story.url ? new URL(story.url).hostname : 'news.ycombinator.com';
                 const imageUrl = getImageUrl();
                 return `
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="story-card h-100">
-                            <img src="${imageUrl}" class="story-image" alt="Random story image" 
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=No+Image';">
+                    <div class="col-md-4 mb-4">
+                        <div class="story-card">
+                            <img src="${imageUrl}" class="story-image" alt="Story image" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=No+Image';">
                             <div class="story-content">
-                                <h5><a href="${story.url || `https://news.ycombinator.com/item?id=${story.id}`}" class="story-title" target="_blank">${story.title}</a></h5>
-                                <p class="story-meta mb-2">
-                                    <i class="fas fa-user"></i> ${story.by} | 
-                                    <i class="fas fa-globe"></i> ${domain} | 
-                                    <i class="fas fa-clock"></i> ${storyTime}
+                                <a href="${story.url || `https://news.ycombinator.com/item?id=${story.id}`}" class="story-title" target="_blank">${story.title}</a>
+                                <p class="story-meta">
+                                    <i class="fas fa-user"></i> ${story.by} &bull; 
+                                    <i class="fas fa-globe"></i> ${domain} &bull; 
+                                    <i class="fas fa-clock"></i> ${timeAgo}
                                 </p>
                                 <div class="story-stats">
                                     <span class="story-stat"><i class="fas fa-star"></i> ${story.score} points</span>
@@ -196,8 +200,52 @@
                 `;
             }
 
+            function renderLoadingPlaceholders() {
+                let placeholders = '';
+                for (let i = 0; i < storiesPerLoad; i++) {
+                    placeholders += `
+                        <div class="col-md-4 mb-4 loading-placeholder">
+                            <div class="story-card">
+                                <div class="story-image placeholder-glow">
+                                    <span class="placeholder col-12" style="height: 200px;"></span>
+                                </div>
+                                <div class="story-content">
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                    <span class="placeholder col-7"></span>
+                                    <div class="story-stats">
+                                        <span class="placeholder col-4"></span>
+                                        <span class="placeholder col-4"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                return placeholders;
+            }
+
+            function getDateCategory(timestamp) {
+                const storyDate = moment.unix(timestamp).startOf('day');
+                const today = moment().startOf('day');
+                const yesterday = moment().subtract(1, 'days').startOf('day');
+
+                if (storyDate.isSame(today)) {
+                    return 'Today';
+                } else if (storyDate.isSame(yesterday)) {
+                    return 'Yesterday';
+                } else {
+                    return 'Older';
+                }
+            }
+
             function fetchStories() {
-                showSpinner();
+                if (isLoading) return;
+                isLoading = true;
+
+                const loadingPlaceholders = renderLoadingPlaceholders();
+                $('#stories-container').append('<div class="row">' + loadingPlaceholders + '</div>');
+
                 $.ajax({
                     url: "https://hacker-news-server-6dzb.onrender.com/api/top-stories",
                     method: "GET",
@@ -209,42 +257,68 @@
 
                         Promise.all(storyPromises)
                             .then(stories => {
-                                stories.forEach(story => {
-                                    const category = getDateCategory(story.time);
-                                    const storyHtml = renderStory(story);
-                                    $(`#${category.toLowerCase()}-stories`).append(storyHtml);
-                                });
-
+                                allStories = allStories.concat(stories);
                                 lastLoadedIndex += stories.length;
-                                if (stories.length < storiesPerLoad) {
-                                    $('#load-more').hide();
-                                }
-                                hideSpinner();
+                                filterAndRenderStories(stories);
+                                $('.loading-placeholder').remove();
+                                isLoading = false;
                             })
                             .catch(error => {
-                                $('#stories-container').html("<p class='text-center'>Failed to process stories. Please try again.</p>");
-                                hideSpinner();
+                                $('.loading-placeholder').replaceWith("<p class='text-center text-danger'>Failed to process stories. Please try again.</p>");
+                                isLoading = false;
                             });
                     },
                     error: function() {
-                        $('#stories-container').html("<p class='text-center'>Failed to fetch stories. Please try again.</p>");
-                        hideSpinner();
+                        $('.loading-placeholder').replaceWith("<p class='text-center text-danger'>Failed to fetch stories. Please try again.</p>");
+                        isLoading = false;
                     }
                 });
             }
 
-            // Remove the 'Load More Stories' button
-            $('#load-more').remove();
+            function filterAndRenderStories(newStories) {
+                const filteredStories = newStories.filter(story => {
+                    const category = getDateCategory(story.time);
+                    return currentFilter === 'all' || category.toLowerCase() === currentFilter;
+                });
+
+                const storiesHtml = filteredStories.map(renderStory).join('');
+                $('#stories-container').append('<div class="row">' + storiesHtml + '</div>');
+            }
 
             // Initial load
             fetchStories();
 
+            // Handle filter buttons
+            $('.filter-btn').on('click', function() {
+                currentFilter = $(this).data('filter');
+                $('.filter-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+                $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+                $('#stories-container').empty();
+                lastLoadedIndex = 0;
+                allStories = [];
+                fetchStories();
+            });
+
             // Implement infinite scroll
             $(window).scroll(function() {
-                if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+                if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
                     fetchStories();
                 }
             });
+
+            // Handle main navigation
+            $('a.nav-link').on('click', function(e) {
+                e.preventDefault();
+                const targetId = $(this).attr('href');
+                $('section').hide();
+                $(targetId).show();
+                $('a.nav-link').removeClass('active');
+                $(this).addClass('active');
+            });
+
+            // Show home section by default
+            $('section').hide();
+            $('#home').show();
         });
     </script>
 </body>
