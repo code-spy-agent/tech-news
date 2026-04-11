@@ -10,20 +10,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # 2. Install SonarScanner
       - name: Install SonarScanner
         run: |
           npm install -g sonar-scanner
 
+      # 3. Validate SONAR_TOKEN (API check)
+      - name: Validate SONAR_TOKEN
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "Validating SONAR_TOKEN..."
+
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "❌ Token is EMPTY"
+            exit 1
+          fi
+
+          response=$(curl -s -u $SONAR_TOKEN: https://sonarcloud.io/api/authentication/validate)
+
+          echo "Response: $response"
+
+          if echo "$response" | grep -q '"valid":true'; then
+            echo "✅ Token is VALID"
+          else
+            echo "❌ Token is INVALID"
+            exit 1
+          fi
+
+      # 4. Run SonarCloud Scan
       - name: Run SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner \
             -Dsonar.projectKey=code-spy-agent_tech-news \
             -Dsonar.organization=code-spy-agent \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.sources=. \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.login=$SONAR_TOKEN
